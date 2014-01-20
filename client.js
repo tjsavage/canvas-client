@@ -9,6 +9,7 @@ function CanvasClient(options) {
 	this.moduleName = options.moduleName;
 	this.port = options.port;
 	this.serverIP = options.serverIP;
+	this.serverPort = options.serverPort;
 	this.options = options;
 
 	var Module = require("./modules/" + this.moduleName);
@@ -20,7 +21,7 @@ util.inherits(CanvasClient, events.EventEmitter);
 CanvasClient.prototype.connect = function(callback) {
 	console.log("connecting",this.name,"...");
 	this.socket = io.connect(this.serverIP, {
-		port: 3000,
+		port: this.serverPort,
 		transports: ['websocket'],
 		'force new connection': true
 	});

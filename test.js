@@ -1,4 +1,5 @@
 var should = require('should');
+var request = require('request');
 var Client = require('./client');
 
 var dummyClientConfig = {
@@ -84,5 +85,58 @@ describe("speaker", function(){
 				});
 			});
 		});
-	})
-})
+	});
+});
+
+describe("motion_detector", function() {
+	it("should emit a tripped state when tripped", function(done) {
+		var motionConfig = {
+			"name": "Test Motion",
+			"serverIP": "127.0.0.1",
+			"moduleName": "motion_detector",
+			"pin": 1
+		};
+
+		var motionClient = new Client(motionConfig);
+		var dummyClient = new Client(dummyClientConfig);
+		motionClient.connect(function() {
+			dummyClient.connect(function() {
+				dummyClient.socketListen("event", function(message) {
+					message.from.should.equal(motionConfig.name);
+					message.event.should.equal("tripped");
+
+					dummyClient.disconnect();
+					motionClient.disconnect();
+					done();
+				});
+
+				motionClient.module.gpioChanged(1);
+			});
+		});
+	});
+});
+
+/*
+describe("doorbell", function() {
+	it("should give a correct twilio http response", function(done) {
+		var doorbellConfig = {
+			"name": "Test Doorbell",
+			"serverIP": "127.0.0.1",
+			"moduleName": "doorbell",
+			"httpPort": 3003,
+			"twilio": {
+				"accountSid": "account123",
+				"authToken": "auth123"
+			}
+		};
+
+		var doorbellClient = new Client(doorbellConfig);
+		doorbellClient.connect(function() {
+			request("http://127.0.0.1:3003", function(err, resp, body) {
+				console.log(body);
+				done();
+			});
+		});
+	});
+});
+*/

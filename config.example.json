@@ -1,7 +1,6 @@
 {
-	"name": "Bed LED Strip",
+	"name": "Test Clock",
 	"serverIP": "127.0.0.1",
-	"moduleName": "led_strip",
-	"pin": 18
+	"serverPort": 3000,
+	"moduleName": "clock"
 }
-
