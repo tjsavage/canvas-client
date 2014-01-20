@@ -18,7 +18,9 @@ function puts(error, stdout, stderr) {
 }
 
 Speaker.prototype.playSound = function(data) {
-	exec("aplay " + __dirname + "/sounds/" + data.name, puts);
+	var soundFile = __dirname + "/sounds/" + data.name;
+	console.log(soundFile);
+	exec("aplay " + soundFile, puts);
 	this.emit("event", "playedSound", {
 		name: data.name
 	});

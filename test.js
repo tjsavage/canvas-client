@@ -116,9 +116,9 @@ describe("motion_detector", function() {
 	});
 });
 
-/*
+
 describe("doorbell", function() {
-	it("should give a correct twilio http response", function(done) {
+	it("should ring the doorbell", function(done) {
 		var doorbellConfig = {
 			"name": "Test Doorbell",
 			"serverIP": "127.0.0.1",
@@ -139,4 +139,3 @@ describe("doorbell", function() {
 		});
 	});
 });
-*/
