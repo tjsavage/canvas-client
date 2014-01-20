@@ -45,6 +45,7 @@ Doorbell.prototype.twilio = function(req, res) {
 	res.send(resp.toString());
 
 	this.emit("event", "rang");
+	this.emit("action", this.options.speakerName, "ringDoorbell");
 };
 
 Doorbell.prototype.unlock = function() {

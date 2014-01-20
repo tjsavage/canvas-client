@@ -77,7 +77,15 @@ CanvasClient.prototype.emitEvent = function(event, eventData) {
 	this.socket.emit("event", message);
 };
 
-CanvasClient.prototype.emitAction = function(message) {
+CanvasClient.prototype.emitAction = function(to, action, data) {
+	var message = {
+		from: this.name,
+		to: to,
+		action: action,
+		data: data
+	};
+	console.log(this.name,"emitAction",message);
+	this.socket.emit("action", message);
 };
 
 CanvasClient.prototype.emitState = function(message) {

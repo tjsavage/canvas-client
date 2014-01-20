@@ -9,6 +9,7 @@ function Speaker(options) {
 	this.options = options;
 
 	this.on('playSound', this.playSound.bind(this));
+	this.on('ringDoorbell', this.ringDoorbell.bind(this));
 }
 util.inherits(Speaker, canvasModule.BaseModule);
 
@@ -17,11 +18,16 @@ function puts(error, stdout, stderr) {
 }
 
 Speaker.prototype.playSound = function(data) {
-	exec("aplay " + data.name, puts);
+	exec("aplay " + __dirname + "/sounds/" + data.name, puts);
 	this.emit("event", "playedSound", {
 		name: data.name
 	});
 };
 
+Speaker.prototype.ringDoorbell = function(data) {
+	this.playSound({
+		name: "doorbell.wav"
+	});
+};
 
 module.exports = Speaker;
