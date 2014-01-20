@@ -1,5 +1,5 @@
 var argv = require('optimist')
-			.usage('Usage: $0 [options file]')
+			.usage('Usage: $0 [config file]')
 			.argv;
 
 

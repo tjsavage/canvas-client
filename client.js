@@ -54,7 +54,7 @@ CanvasClient.prototype.onEvent = function(message) {
 CanvasClient.prototype.onAction = function(message) {
 	console.log("action",message);
 	if (message.to === this.name) {
-		this.module.emit(message.action);
+		this.module.emit(message.action, message.data);
 	}
 };
 
@@ -66,10 +66,11 @@ CanvasClient.prototype.onUpdate = function(message) {
 	console.log("update");
 };
 
-CanvasClient.prototype.emitEvent = function(event) {
+CanvasClient.prototype.emitEvent = function(event, eventData) {
 	var message = {
 		from: this.name,
-		event: event
+		event: event,
+		data: eventData
 	};
 	console.log(this.name,"emitEvent",message);
 	this.socket.emit("event", message);
