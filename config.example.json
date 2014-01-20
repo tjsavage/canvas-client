@@ -1,0 +1,7 @@
+{
+	"name": "Bed LED Strip",
+	"serverIP": "127.0.0.1",
+	"moduleName": "led_strip",
+	"pin": 18
+}
+
