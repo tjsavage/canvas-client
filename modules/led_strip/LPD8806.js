@@ -109,6 +109,7 @@ LightStrips.prototype.setColor = function(colorData) {
     }
     this.all(newColorData.r, newColorData.g, newColorData.b);
     this.state.color = newColorData;
+    console.log(this.state.color);
     this.sync();
 };
 
