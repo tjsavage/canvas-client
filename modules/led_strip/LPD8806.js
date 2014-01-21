@@ -14,6 +14,7 @@ function LightStrips(device, num_pixels, spiDevice) {
     this.device = spiDevice;
     this.device.open();
     this.pixel_buffer.fill(0);
+    this.state = {};
     this.state.color = {
         r:0,
         g:0,
