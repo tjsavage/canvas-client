@@ -25,8 +25,11 @@ util.inherits(LedStrip, canvasModule.BaseModule);
 
 LedStrip.prototype.turnOn = function() {
 	console.log('led turn on');
-	this.lights.all(255, 255, 255);
-	this.lights.sync();
+	this.lights.setColor({
+		r: 1.0,
+		g: 1.0,
+		b: 1.0
+	});
 	this.state = "on";
 	this.emit("event", "turnedOn");
 };
