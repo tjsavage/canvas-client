@@ -70,7 +70,7 @@ LedStrip.prototype.notification = function() {
 	});
 	this.state = "notification";
 	this.emit("event", "notified");
-	this.setTimeout(this.turnOff.bind(this), 2000);
+	setTimeout(this.turnOff.bind(this), 2000);
 };
 
 LedStrip.prototype.endNightLight = function() {
