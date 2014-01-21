@@ -37,6 +37,10 @@ LedStrip.prototype.turnOn = function() {
 
 LedStrip.prototype.turnOff = function() {
 	console.log('led turn off');
+	if (this.animation) {
+		this.animation.stop();
+		this.animation = null;
+	}
 	this.lights.off();
 	this.state = "off";
 	this.emit("event", "turnedOff");
