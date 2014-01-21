@@ -79,7 +79,7 @@ LedStrip.prototype.endNightLight = function() {
 
 LedStrip.prototype.toggleNightLight = function() {
 	var date = new Date();
-	if (date.getHours() < 5 || date.getHours() > 10) {
+	if (date.getHours() < 5 || date.getHours() >= 10) {
 		if (this.state == "off") {
 			this.nightLight();
 		} else {
@@ -111,10 +111,7 @@ LedStrip.prototype.notification = function() {
 LedStrip.prototype.sunrise = function() {
 	this.startAnimation("sunrise", 600000, {
 		hold: true
-	}, function() {
-		this.emit("event", "sunrose");
-		this.turnOff();
-	}.bind(this));
+	});
 	this.state = "sunrise";
 	this.emit("event", "sunrising");
 };
