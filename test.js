@@ -185,4 +185,68 @@ describe("action trigger", function() {
 			});
 		});
 	});
+
+	it("should trigger an action for a generic event, without requiring a sender", function(done) {
+		var actionTriggerConfig = {
+			"name": "Test Trigger",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "action_trigger",
+			"recipes": [
+				{
+					"if_": [
+						{
+							"event": "tripped"
+						}
+					],
+					"then": [
+						{
+							"to": "Test Speaker",
+							"action": "ringDoorbell"
+						}
+					]
+				}
+			]
+		};
+
+		var speakerConfig = {
+			"name": "Test Speaker",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "speaker",
+		};
+
+		var motionConfig = {
+			"name": "Test Motion",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "motion_detector",
+			"pin": 1
+		};
+
+		var motionClient = new Client(motionConfig);
+		var speakerClient = new Client(speakerConfig);
+		var actionTriggerClient = new Client(actionTriggerConfig);
+		var dummyClient = new Client(dummyClientConfig);
+
+		motionClient.connect(function() {
+			speakerClient.connect(function() {
+				actionTriggerClient.connect(function() {
+					dummyClient.connect(function() {
+						dummyClient.socketListen("event", function(message) {
+							if (message.event == "playedSound") {
+								dummyClient.disconnect();
+								actionTriggerClient.disconnect();
+								speakerClient.disconnect();
+								motionClient.disconnect();
+								done();
+							}
+						});
+
+						motionClient.module.gpioChanged(1);
+					});
+				});
+			});
+		});
+	});
 })
