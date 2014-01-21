@@ -16,9 +16,11 @@ function LedStrip(options) {
 	this.on("action:turnOff", this.turnOff.bind(this));
 	this.on("action:nightLight", this.nightLight.bind(this));
 	this.on("action:endNightLight", this.endNightLight.bind(this));
+	this.on("action:toggleNightLight", this.toggleNightLight.bind(this));
 	this.on("action:notification", this.notification.bind(this));
 	this.on("action:sunrise", this.sunrise.bind(this));
 
+	this.on("event:minuteTick", this.confirmState.bind(this));
 	this.state = "off";
 
 	this.turnOff();
@@ -45,6 +47,18 @@ LedStrip.prototype.turnOff = function() {
 	this.emit("event", "turnedOff");
 };
 
+// Sudden voltage noise tends to automatically turn some leds on.
+// We do this to make sure they stay off
+LedStrip.prototype.confirmState = function() {
+	if (this.state == "off") {
+		this.lights.setColor({
+			r: 0,
+			g: 0,
+			b: 0
+		});
+	}
+};
+
 LedStrip.prototype.nightLight = function() {
 	if (this.state == "off") {
 		this.lights.setColor({
@@ -55,6 +69,20 @@ LedStrip.prototype.nightLight = function() {
 		this.state = "nightlight";
 	}
 	this.emit("event", "nightLighted");
+};
+
+LedStrip.prototype.endNightLight = function() {
+	if (this.state == "nightlight") {
+		this.turnOff();
+	}
+};
+
+LedStrip.prototype.toggleNightLight = function() {
+	if (this.state == "off") {
+		this.nightLight();
+	} else if (this.state == "nightlight") {
+		this.turnOff();
+	}
 };
 
 LedStrip.prototype.notification = function() {
@@ -80,12 +108,6 @@ LedStrip.prototype.sunrise = function() {
 	}.bind(this));
 	this.state = "sunrise";
 	this.emit("event", "sunrising");
-};
-
-LedStrip.prototype.endNightLight = function() {
-	if (this.state == "nightlight") {
-		this.turnOff();
-	}
 };
 
 LedStrip.prototype.startAnimation = function(animationName, duration, options, onFinish) {
