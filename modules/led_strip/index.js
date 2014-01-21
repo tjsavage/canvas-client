@@ -3,6 +3,7 @@ var canvasModule = require('../canvas-module');
 var spi = require('spi');
 var LightStrips = require('./LPD8806').LightStrips;
 var animations = require('./animations');
+var time = require('time');
 
 function LedStrip(options) {
 	canvasModule.BaseModule.call(this);
@@ -78,7 +79,8 @@ LedStrip.prototype.endNightLight = function() {
 };
 
 LedStrip.prototype.toggleNightLight = function() {
-	var date = new Date();
+	var date = new time.Date();
+	date.setTimezone("America/Los_Angeles");
 	if (date.getHours() < 5 || date.getHours() >= 22) {
 		if (this.state == "off") {
 			this.nightLight();

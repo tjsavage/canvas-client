@@ -15,6 +15,7 @@
 		"mocha": "*",
 		"should": "*",
 		"request": "*",
-		"sleep": "*"
+		"sleep": "*",
+		"time": "*"
 	}
 }
