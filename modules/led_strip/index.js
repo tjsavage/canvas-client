@@ -23,7 +23,7 @@ function LedStrip(options) {
 	this.on("event:minuteTick", this.confirmState.bind(this));
 	this.state = "off";
 
-	this.turnOff();
+	this.notification();
 }
 util.inherits(LedStrip, canvasModule.BaseModule);
 
