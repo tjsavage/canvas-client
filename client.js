@@ -51,13 +51,13 @@ CanvasClient.prototype.disconnect = function() {
 
 CanvasClient.prototype.onEvent = function(message) {
 	console.log(this.name,"onEvent",message);
-	this.module.emit(message.event, message.data);
+	this.module.emit("event:" + message.event, message);
 };
 
 CanvasClient.prototype.onAction = function(message) {
 	console.log("action",message);
 	if (message.to === this.name) {
-		this.module.emit(message.action, message.data);
+		this.module.emit("action:" + message.action, message.data);
 	}
 };
 

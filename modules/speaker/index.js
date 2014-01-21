@@ -8,8 +8,8 @@ function Speaker(options) {
 
 	this.options = options;
 
-	this.on('playSound', this.playSound.bind(this));
-	this.on('ringDoorbell', this.ringDoorbell.bind(this));
+	this.on('action:playSound', this.playSound.bind(this));
+	this.on('action:ringDoorbell', this.ringDoorbell.bind(this));
 }
 util.inherits(Speaker, canvasModule.BaseModule);
 
@@ -27,6 +27,7 @@ Speaker.prototype.playSound = function(data) {
 };
 
 Speaker.prototype.ringDoorbell = function(data) {
+	console.log("ringing doorbell");
 	this.playSound({
 		name: "doorbell.wav"
 	});

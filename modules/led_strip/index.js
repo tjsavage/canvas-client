@@ -11,8 +11,8 @@ function LedStrip(options) {
 	var spiDevice = new spi.Spi('/dev/spidev0.0', {});
 	this.lights = new LightStrips('/dev/spidev0.0', options.leds, spiDevice);
 
-	this.on("turnOn", this.turnOn.bind(this));
-	this.on("turnOff", this.turnOff.bind(this));
+	this.on("action:turnOn", this.turnOn.bind(this));
+	this.on("action:turnOff", this.turnOff.bind(this));
 
 	this.turnOff();
 }

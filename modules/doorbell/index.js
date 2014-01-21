@@ -22,8 +22,8 @@ function Doorbell(options) {
 
 	this.locked = true;
 
-	this.on('unlock', this.unlock.bind(this));
-	this.on('lock', this.lock.bind(this));
+	this.on('action:unlock', this.unlock.bind(this));
+	this.on('action:lock', this.lock.bind(this));
 }
 util.inherits(Doorbell, canvasModule.BaseModule);
 

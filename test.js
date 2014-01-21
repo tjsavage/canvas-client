@@ -5,6 +5,7 @@ var Client = require('./client');
 var dummyClientConfig = {
 	"name": "Dummy Client",
 	"serverIP": "127.0.0.1",
+	"serverPort": 3030,
 	"moduleName": "logger"
 };
 
@@ -22,6 +23,7 @@ describe("led_strip", function() {
 	var ledConfig = {
 		"name": "Test LED Strip",
 		"serverIP": "127.0.0.1",
+		"serverPort": 3030,
 		"moduleName": "led_strip",
 		"pin": 18
 	};
@@ -55,6 +57,7 @@ describe("speaker", function(){
 	var speakerConfig = {
 		"name": "Test Speaker",
 		"serverIP": "127.0.0.1",
+		"serverPort": 3030,
 		"moduleName": "speaker",
 	};
 
@@ -93,6 +96,7 @@ describe("motion_detector", function() {
 		var motionConfig = {
 			"name": "Test Motion",
 			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
 			"moduleName": "motion_detector",
 			"pin": 1
 		};
@@ -116,26 +120,69 @@ describe("motion_detector", function() {
 	});
 });
 
-
-describe("doorbell", function() {
-	it("should ring the doorbell", function(done) {
-		var doorbellConfig = {
-			"name": "Test Doorbell",
+describe("action trigger", function() {
+	it("should trigger an action for a specific event", function(done) {
+		var actionTriggerConfig = {
+			"name": "Test Trigger",
 			"serverIP": "127.0.0.1",
-			"moduleName": "doorbell",
-			"httpPort": 3003,
-			"twilio": {
-				"accountSid": "account123",
-				"authToken": "auth123"
-			}
+			"serverPort": 3030,
+			"moduleName": "action_trigger",
+			"recipes": [
+				{
+					"if_": [
+						{
+							"from": "Test Motion",
+							"event": "tripped"
+						}
+					],
+					"then": [
+						{
+							"to": "Test Speaker",
+							"action": "ringDoorbell"
+						}
+					]
+				}
+			]
 		};
 
-		var doorbellClient = new Client(doorbellConfig);
-		doorbellClient.connect(function() {
-			request("http://127.0.0.1:3003", function(err, resp, body) {
-				console.log(body);
-				done();
+		var speakerConfig = {
+			"name": "Test Speaker",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "speaker",
+		};
+
+		var motionConfig = {
+			"name": "Test Motion",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "motion_detector",
+			"pin": 1
+		};
+
+		var motionClient = new Client(motionConfig);
+		var speakerClient = new Client(speakerConfig);
+		var actionTriggerClient = new Client(actionTriggerConfig);
+		var dummyClient = new Client(dummyClientConfig);
+
+		motionClient.connect(function() {
+			speakerClient.connect(function() {
+				actionTriggerClient.connect(function() {
+					dummyClient.connect(function() {
+						dummyClient.socketListen("event", function(message) {
+							if (message.event == "playedSound") {
+								dummyClient.disconnect();
+								actionTriggerClient.disconnect();
+								speakerClient.disconnect();
+								motionClient.disconnect();
+								done();
+							}
+						});
+
+						motionClient.module.gpioChanged(1);
+					});
+				});
 			});
 		});
 	});
-});
+})
