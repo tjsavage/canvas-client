@@ -41,6 +41,7 @@ CanvasClient.prototype.connect = function(callback) {
 		if (callback) {
 			callback();
 		}
+		this.module.emit("connected");
 	}.bind(this));
 };
 
@@ -50,6 +51,7 @@ CanvasClient.prototype.disconnect = function() {
 
 CanvasClient.prototype.onEvent = function(message) {
 	console.log(this.name,"onEvent",message);
+	this.module.emit(message.event, message.data);
 };
 
 CanvasClient.prototype.onAction = function(message) {
