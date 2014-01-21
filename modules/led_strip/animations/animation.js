@@ -16,7 +16,7 @@ Animation.prototype.start = function() {
 	this.running = true;
 
 	if (this.options.startColor) {
-		this.setter.setColor(startColor);
+		this.setter.setColor(this.options.startColor);
 	}
 
 	setTimeout(function() {
