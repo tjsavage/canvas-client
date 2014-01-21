@@ -1,3 +1,4 @@
+var util = require("./util");
 
 function LightStrips(device, num_pixels, spiDevice) {
     this.gamma = [];
