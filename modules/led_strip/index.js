@@ -1,6 +1,7 @@
 var util = require('util');
 var canvasModule = require('../canvas-module');
 var spi = require('spi');
+var LightStrips = require('./LPD8806').LightStrips;
 
 function LedStrip(options) {
 	canvasModule.BaseModule.call(this);
