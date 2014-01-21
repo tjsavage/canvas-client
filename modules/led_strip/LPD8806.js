@@ -55,18 +55,58 @@ LightStrips.prototype.set = function(pixel, r, g, b) {
     this.pixel_buffer[pixel*3+2] = this.gamma[Math.floor(b)];
 };
 
-/*
-LightStrips.prototype.throb = function(pixels, start_color, end_color, duration, options) {
-    this.stop();
-    this.animate = new Throb(this, pixels, start_color, end_color, duration, options);
-    this.animate.start();
-}*/
-
-LightStrips.prototype.stop = function() {
-    if (this.animate !== null) {
-        this.animate.stop();
-        this.animate = null;
+LightStrips.prototype.setColor = function(colorData) {
+    var newColorData = this.state.color;
+    var rgbChanged = false;
+    var hsvChanged = false;
+    if (typeof colorData.r != 'undefined') {
+        newColorData.r = colorData.r;
+        rgbChanged = true;
     }
+    if (typeof colorData.g != 'undefined') {
+        newColorData.g = colorData.g;
+        rgbChanged = true;
+    }
+    if (typeof colorData.b != 'undefined') {
+        newColorData.b = colorData.b;
+        rgbChanged = true;
+    }
+    if (typeof colorData.h != 'undefined') {
+        newColorData.h = colorData.h;
+        hsvChanged = true;
+    }
+    if (typeof colorData.s != 'undefined') {
+        newColorData.s = colorData.s;
+        hsvChanged = true;
+    }
+    if (typeof colorData.v != 'undefined') {
+        newColorData.v = colorData.v;
+        hsvChanged = true;
+    }
+    if (hsvChanged && !rgbChanged) {
+        var newRGBData = util.HSVtoRGB(newColorData);
+        newColorData.r = newRGBData.r;
+        newColorData.g = newRGBData.g;
+        newColorData.b = newRGBData.b;
+    } else if (rgbChanged && !hsvChanged) {
+        var newHSVData = util.RGBtoHSV(newColorData);
+        newColorData.h = newHSVData.h;
+        newColorData.s = newHSVData.s;
+        newColorData.v = newHSVData.v;
+    }
+    this.all(newColorData.r, newColorData.g, newColorData.b);
+};
+
+LightStrips.prototype.setValue = function(valuePercentage) {
+    this.setColor({
+        v: valuePercentage
+    });
+};
+
+LightStrips.prototype.setHue = function(newHue) {
+    this.setColor({
+        h: newHue
+    });
 };
 
 module.exports.LightStrips = LightStrips;

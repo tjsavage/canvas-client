@@ -2,6 +2,7 @@ var util = require('util');
 var canvasModule = require('../canvas-module');
 var spi = require('spi');
 var LightStrips = require('./LPD8806').LightStrips;
+var animations = require('./animations');
 
 function LedStrip(options) {
 	canvasModule.BaseModule.call(this);
@@ -41,7 +42,11 @@ LedStrip.prototype.nightLight = function() {
 	if (this.state == "off") {
 		this.lights.all(190, 38, 41);
 		this.lights.sync();
-		this.power = true;
+		this.startAnimation("pulse", 2000, {
+			minValue: 0.4,
+			maxValue: 0.6,
+			loop: true
+		});
 		this.state = "nightlight";
 	}
 	this.emit("event", "nightLighted");
@@ -49,8 +54,14 @@ LedStrip.prototype.nightLight = function() {
 
 LedStrip.prototype.endNightLight = function() {
 	if (this.state == "nightlight") {
+		this.animation.stop();
 		this.turnOff();
 	}
+};
+
+LedStrip.prototype.startAnimation = function(animationName, duration, options) {
+	this.animation = animations.load(animationName, this.lights, duration, options);
+	this.animation.start();
 };
 
 module.exports = LedStrip;

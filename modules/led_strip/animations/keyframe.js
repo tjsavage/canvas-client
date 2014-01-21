@@ -39,7 +39,6 @@ KeyFrame.prototype.refresh = function(percentComplete) {
 		newColor.v = (this.options.frames[nextFrameNum].v - this.options.frames[prevFrameNum].v) * interpolation + this.options.frames[prevFrameNum].v;
 	}
 	this.setter.setColor(newColor);
-	this.setter.emitState();
 	this.setter.all();
 };
 

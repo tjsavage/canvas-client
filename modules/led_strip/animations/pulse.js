@@ -21,7 +21,6 @@ Pulse.prototype.refresh = function(percentComplete) {
 	var angle = (Math.PI * 2) * percentComplete;
 	var value = (Math.sin(angle)) / (2.0) * (this.maxValue - this.minValue) + this.minValue + (this.maxValue - this.minValue) / 2.0;
 	this.setter.setValue(value);
-	this.setter.emitState();
 	this.setter.all();
 };
 
