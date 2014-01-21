@@ -15,6 +15,10 @@ Animation.prototype.start = function() {
 	this.startTime = (new Date()).getTime();
 	this.running = true;
 
+	if (this.options.startColor) {
+		this.setter.setColor(startColor);
+	}
+
 	setTimeout(function() {
 		T.tick();
 	}, REFRESH_TIME);

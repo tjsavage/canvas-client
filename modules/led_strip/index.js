@@ -43,9 +43,12 @@ LedStrip.prototype.turnOff = function() {
 
 LedStrip.prototype.nightLight = function() {
 	if (this.state == "off") {
-		this.lights.all(190, 38, 41);
-		this.lights.sync();
 		this.startAnimation("pulse", 2000, {
+			startColor: {
+				h: 0.4,
+				s: 0.8,
+				v: 0.5
+			},
 			minValue: 0.4,
 			maxValue: 0.6,
 			loop: true
