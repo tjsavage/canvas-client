@@ -16,6 +16,7 @@ function LedStrip(options) {
 	this.on("action:turnOff", this.turnOff.bind(this));
 	this.on("action:nightLight", this.nightLight.bind(this));
 	this.on("action:endNightLight", this.endNightLight.bind(this));
+	this.on("action:notification", this.notification.bind(this));
 
 	this.state = "off";
 
@@ -43,11 +44,11 @@ LedStrip.prototype.turnOff = function() {
 
 LedStrip.prototype.nightLight = function() {
 	if (this.state == "off") {
-		this.startAnimation("pulse", 2000, {
+		this.startAnimation("pulse", 4000, {
 			startColor: {
 				h: 0.4,
 				s: 0.8,
-				v: 0.5
+				v: 0.4
 			},
 			minValue: 0.4,
 			maxValue: 0.6,
@@ -56,6 +57,20 @@ LedStrip.prototype.nightLight = function() {
 		this.state = "nightlight";
 	}
 	this.emit("event", "nightLighted");
+};
+
+LedStrip.prototype.notification = function() {
+	this.startAnimation("pulse", 300, {
+		startColor: {
+			r: 1.0,
+			g: 1.0,
+			b: 1.0
+		},
+		loop: true
+	});
+	this.state = "notification";
+	this.emit("event", "notified");
+	this.setTimeout(this.turnOff.bind(this), 2000);
 };
 
 LedStrip.prototype.endNightLight = function() {
