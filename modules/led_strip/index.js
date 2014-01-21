@@ -78,10 +78,19 @@ LedStrip.prototype.endNightLight = function() {
 };
 
 LedStrip.prototype.toggleNightLight = function() {
-	if (this.state == "off") {
-		this.nightLight();
-	} else if (this.state == "nightlight") {
-		this.turnOff();
+	var date = new Date();
+	if (date.getHours() < 5 || date.getHours() > 10) {
+		if (this.state == "off") {
+			this.nightLight();
+		} else if (this.state == "nightlight") {
+			this.turnOff();
+		}
+	} else {
+		if (this.state == "off") {
+			this.turnOn();
+		} else {
+			this.turnOff();
+		}
 	}
 };
 
