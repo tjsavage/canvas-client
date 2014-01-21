@@ -19,7 +19,6 @@ function puts(error, stdout, stderr) {
 
 Speaker.prototype.playSound = function(data) {
 	var soundFile = __dirname + "/sounds/" + data.name;
-	console.log(soundFile);
 	exec("aplay " + soundFile, puts);
 	this.emit("event", "playedSound", {
 		name: data.name
@@ -27,7 +26,6 @@ Speaker.prototype.playSound = function(data) {
 };
 
 Speaker.prototype.ringDoorbell = function(data) {
-	console.log("ringing doorbell");
 	this.playSound({
 		name: "doorbell.wav"
 	});

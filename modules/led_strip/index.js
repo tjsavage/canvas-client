@@ -17,6 +17,7 @@ function LedStrip(options) {
 	this.on("action:nightLight", this.nightLight.bind(this));
 	this.on("action:endNightLight", this.endNightLight.bind(this));
 	this.on("action:notification", this.notification.bind(this));
+	this.on("action:sunrise", this.sunrise.bind(this));
 
 	this.state = "off";
 
@@ -25,7 +26,6 @@ function LedStrip(options) {
 util.inherits(LedStrip, canvasModule.BaseModule);
 
 LedStrip.prototype.turnOn = function() {
-	console.log('led turn on');
 	this.lights.setColor({
 		r: 1.0,
 		g: 1.0,
@@ -36,7 +36,6 @@ LedStrip.prototype.turnOn = function() {
 };
 
 LedStrip.prototype.turnOff = function() {
-	console.log('led turn off');
 	if (this.animation) {
 		this.animation.stop();
 		this.animation = null;
@@ -48,15 +47,10 @@ LedStrip.prototype.turnOff = function() {
 
 LedStrip.prototype.nightLight = function() {
 	if (this.state == "off") {
-		this.startAnimation("pulse", 4000, {
-			startColor: {
-				h: 0.4,
-				s: 0.8,
-				v: 0.4
-			},
-			minValue: 0.4,
-			maxValue: 0.6,
-			loop: true
+		this.lights.setColor({
+			r: 180,
+			g: 40,
+			b: 20
 		});
 		this.state = "nightlight";
 	}
@@ -77,15 +71,25 @@ LedStrip.prototype.notification = function() {
 	setTimeout(this.turnOff.bind(this), 2000);
 };
 
+LedStrip.prototype.sunrise = function() {
+	this.startAnimation("sunrise", 600000, {
+		hold: true
+	}, function() {
+		this.emit("event", "sunrose");
+		this.turnOff();
+	}.bind(this));
+	this.state = "sunrise";
+	this.emit("event", "sunrising");
+};
+
 LedStrip.prototype.endNightLight = function() {
 	if (this.state == "nightlight") {
-		this.animation.stop();
 		this.turnOff();
 	}
 };
 
-LedStrip.prototype.startAnimation = function(animationName, duration, options) {
-	this.animation = animations.load(animationName, this.lights, duration, options);
+LedStrip.prototype.startAnimation = function(animationName, duration, options, onFinish) {
+	this.animation = animations.load(animationName, this.lights, duration, options, onFinish);
 	this.animation.start();
 };
 

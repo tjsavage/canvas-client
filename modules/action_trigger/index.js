@@ -18,7 +18,6 @@ util.inherits(ActionTrigger, canvasModule.BaseModule);
 
 ActionTrigger.prototype.registerHandler = function(eventName, testData, actionsData) {
 	this.on("event:" + eventName, function(message) {
-		console.log("got event:",message);
 		if (message.from == testData.from) {
 			for (var actionIndex in actionsData) {
 				this.emit("action", actionsData[actionIndex].to,
