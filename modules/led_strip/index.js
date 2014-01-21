@@ -13,6 +13,8 @@ function LedStrip(options) {
 
 	this.on("turnOn", this.turnOn.bind(this));
 	this.on("turnOff", this.turnOff.bind(this));
+
+	this.turnOff();
 }
 util.inherits(LedStrip, canvasModule.BaseModule);
 
