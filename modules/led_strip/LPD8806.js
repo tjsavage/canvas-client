@@ -14,14 +14,20 @@ function LightStrips(device, num_pixels, spiDevice) {
     this.device = spiDevice;
     this.device.open();
     this.pixel_buffer.fill(0);
+    this.state.color = {
+        r:0,
+        g:0,
+        b:0
+    };
     this.off();
     this.animate = null;
   
 }
 
 LightStrips.prototype.off = function() {
-    this.all(0, 0, 0);
-    this.sync();
+    this.setColor({
+        v: 0
+    });
 };
 
 LightStrips.prototype.sync = function() {
@@ -95,6 +101,8 @@ LightStrips.prototype.setColor = function(colorData) {
         newColorData.v = newHSVData.v;
     }
     this.all(newColorData.r, newColorData.g, newColorData.b);
+    this.state.color = newColorData;
+    this.sync();
 };
 
 LightStrips.prototype.setValue = function(valuePercentage) {
