@@ -120,6 +120,38 @@ describe("motion_detector", function() {
 	});
 });
 
+describe("temperature_sensor", function() {
+	it("should read the temperature", function(done) {
+		var temperatureConfig = {
+			"name": "Test Temperature",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "temperature_sensor",
+			"deviceFilepath": "/tmp/fake_temp_sensor"
+		}
+
+		var temperatureClient = new Client(temperatureConfig);
+		var dummyClient = new Client(dummyClientConfig);
+
+		var fs = require("fs");
+		fs.writeFileSync("/tmp/fake_temp_sensor", "4b 01 4b 5d : crc=01 YES\4b 01 4b 5d t=2600");			
+		dummyClient.connect(function() {
+			dummyClient.socketListen("event", function(message) {
+				dummyClient.disconnect();
+				temperatureClient.disconnect();
+
+				message.from.should.equal(temperatureConfig.name);
+				message.event.should.equal("temperature");
+				Math.round(message.data.temperature).should.equal(79);
+				done();
+			});
+			temperatureClient.connect(function() {
+				console.log("connected temp");
+			});
+		});
+	});
+})
+
 describe("action trigger", function() {
 	it("should trigger an action for a specific event", function(done) {
 		var actionTriggerConfig = {
