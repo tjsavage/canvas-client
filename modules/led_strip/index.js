@@ -63,9 +63,9 @@ LedStrip.prototype.confirmState = function() {
 LedStrip.prototype.nightLight = function() {
 	if (this.state == "off") {
 		this.lights.setColor({
-			r: 164,
-			g: 140,
-			b: 140
+			r: 134,
+			g: 70,
+			b: 70
 		});
 		this.state = "nightlight";
 	}
