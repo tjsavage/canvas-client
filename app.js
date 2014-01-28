@@ -1,4 +1,3 @@
-var CanvasClient = require('./client');
+var canvas = require('./client');
 
-var client = new CanvasClient((require(process.argv[2])));
-client.connect();
+var client = canvas.createClient((require(process.argv[2])));

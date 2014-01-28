@@ -1,6 +1,6 @@
 var should = require('should');
 var request = require('request');
-var Client = require('./client');
+var Client = require('./client').CanvasClient;
 
 var dummyClientConfig = {
 	"name": "Dummy Client",
@@ -19,6 +19,7 @@ describe("client", function() {
 	});
 });
 
+/*
 describe("led_strip", function() {
 	var ledConfig = {
 		"name": "Test LED Strip",
@@ -52,7 +53,7 @@ describe("led_strip", function() {
 		});
 	});
 });
-
+*/
 describe("speaker", function(){
 	var speakerConfig = {
 		"name": "Test Speaker",

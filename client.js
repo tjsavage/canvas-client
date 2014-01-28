@@ -15,8 +15,22 @@ function CanvasClient(options) {
 	var Module = require("./modules/" + this.moduleName);
 	this.module = new Module(this.options);
 	this.socket = null;
+
+	process.on('message', this.processMessage.bind(this));
 }
 util.inherits(CanvasClient, events.EventEmitter);
+
+CanvasClient.prototype.processMessage = function(msg) {
+	if (msg == 'shutdown') {
+		console.log(this.name,"closing connections");
+		if (this.socket) {
+			this.socket.disconnect();
+		}
+		setTimeout(function() {
+			process.exit(0);
+		}, 1500);
+	}
+}
 
 CanvasClient.prototype.connect = function(callback) {
 	console.log("connecting",this.name,"...");
@@ -111,5 +125,9 @@ CanvasClient.prototype.socketListen = function(name, callback) {
 	this.socket.on(name, callback);
 };
 
+module.exports.createClient = function(options) {
+	var client = new CanvasClient(options);
+	client.connect();
+}
 
-module.exports = CanvasClient;
+module.exports.CanvasClient = CanvasClient;
