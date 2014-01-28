@@ -55,7 +55,7 @@ CanvasClient.prototype.onEvent = function(message) {
 };
 
 CanvasClient.prototype.onAction = function(message) {
-	console.log("action",message);
+	console.log(this.name,"action",message);
 	if (message.to === this.name) {
 		this.module.emit("action:" + message.action, message.data);
 	}
