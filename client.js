@@ -30,7 +30,7 @@ CanvasClient.prototype.processMessage = function(msg) {
 			process.exit(0);
 		}, 1500);
 	}
-}
+};
 
 CanvasClient.prototype.connect = function(callback) {
 	console.log("connecting",this.name,"...");

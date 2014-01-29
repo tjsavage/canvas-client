@@ -21,6 +21,7 @@ TemperatureSensor.prototype.celsiusToFahrenheit = function(c) {
 TemperatureSensor.prototype.readTemperature = function() {
 	fs.readFile(this.deviceFilepath, {encoding: "utf-8"}, function(err, data) {
 		if (err) throw err;
+		data = String(data);
 		if (data.indexOf("YES") != -1) {
 			var tempReadingIndex = data.indexOf("t=");
 			var tempReading = parseInt(data.substring(tempReadingIndex + 2)) / 100.0;
