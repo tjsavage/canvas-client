@@ -22,13 +22,13 @@ SimpleOnOff.prototype.registerHandlers = function() {
 SimpleOnOff.prototype.turnOn = function() {
 	this.gpioPin.set(function() {
 		this.emit("event", "turnedOn");
-	});
+	}.bind(this));
 };
 
 SimpleOnOff.prototype.turnOff = function() {
 	this.gpioPin.set(0, function() {
 		this.emit("event", "turnedOff");
-	});
+	}.bind(this));
 };
 
 module.exports = SimpleOnOff;
