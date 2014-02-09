@@ -16,9 +16,11 @@ util.inherits(SimpleButton, canvasModule.BaseModule);
 
 SimpleButton.prototype.registerHandlers = function() {
 	this.gpioPin.on("change", this.gpioChanged.bind(this));
+	console.log("registered handlers");
 };
 
 SimpleButton.prototype.gpioChanged = function(val) {
+	console.log("got value",val);
 	if (val == 1) {
 		this.emit("event", "on");
 	} else {
