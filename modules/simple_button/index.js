@@ -6,7 +6,6 @@ function SimpleButton(options) {
 	canvasModule.BaseModule.call(this);
 
 	this.options = options;
-	console.log("starting simple button");
 
 	this.gpioPin = gpio.export(options.pin, {
 		direction: "in",
@@ -16,13 +15,10 @@ function SimpleButton(options) {
 util.inherits(SimpleButton, canvasModule.BaseModule);
 
 SimpleButton.prototype.registerHandlers = function() {
-	console.log("called registerHandlers");
 	this.gpioPin.on("change", this.gpioChanged.bind(this));
-	console.log("registered handlers");
 };
 
 SimpleButton.prototype.gpioChanged = function(val) {
-	console.log("got value",val);
 	if (val == 1) {
 		this.emit("event", "on");
 	} else {
