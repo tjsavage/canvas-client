@@ -10,7 +10,7 @@ function TemperatureSensor(options) {
 	this.deviceFilepath = options.deviceFilepath;
 	this.readFrequency = options.readFrequency;
 
-	this.on("connected", this.readTemperature.bind(this));
+	this.on("action:readTemperature", this.readTemperature.bind(this));
 }
 util.inherits(TemperatureSensor, canvasModule.BaseModule);
 

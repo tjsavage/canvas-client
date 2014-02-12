@@ -148,7 +148,74 @@ describe("temperature_sensor", function() {
 			});
 			temperatureClient.connect(function() {
 				console.log("connected temp");
+				dummyClient.module.emit("action", "Test Temperature", "readTemperature");
 			});
+		});
+	});
+})
+
+describe("room_thermometer", function() {
+	it("should read the temperature from all the sensors", function(done) {
+		var temperature1Config = {
+			"name": "Test Temperature 1",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "temperature_sensor",
+			"deviceFilepath": "/tmp/fake_temp_sensor1"
+		};
+		var temperature2Config = {
+			"name": "Test Temperature 2",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "temperature_sensor",
+			"deviceFilepath": "/tmp/fake_temp_sensor2"
+		};
+		var roomThermometerConfig = {
+			"name": "Test Room Thermometer",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "room_thermometer",
+			"temperatureSensors": [
+				"Test Temperature 1",
+				"Test Temperature 2"
+			]
+		};
+
+		var temperatureClient1 = new Client(temperature1Config);
+		var temperatureClient2 = new Client(temperature2Config);
+		var roomThermometerClient = new Client(roomThermometerConfig);
+		var dummyClient = new Client(dummyClientConfig);
+
+		var fs = require("fs");
+		fs.writeFileSync("/tmp/fake_temp_sensor1", "4b 01 4b 5d : crc=01 YES\4b 01 4b 5d t=2600");
+		fs.writeFileSync("/tmp/fake_temp_sensor2", "4b 01 4b 5d : crc=01 YES\4b 01 4b 5d t=2800");		
+		dummyClient.connect(function() {
+			var tempsRead = 0;
+			dummyClient.socketListen("event", function(message) {
+				if (message.from == roomThermometerConfig.name) {
+					message.event.should.equal("temperature");
+					console.log(Math.round(message.data.temperature));
+					if (Math.round(message.data.temperature) == 79) {
+						tempsRead = 1
+					} else if (tempsRead == 1) {
+						Math.round(message.data.temperature).should.equal(81);
+						dummyClient.disconnect();
+						temperatureClient1.disconnect();
+						temperatureClient2.disconnect();
+						roomThermometerClient.disconnect();
+						done();
+					}
+				}
+			});
+			roomThermometerClient.connect(function() {
+				temperatureClient1.connect(function() {
+					console.log("connected temp1");
+					temperatureClient2.connect(function() {
+						console.log("connected temp 2")
+						dummyClient.module.emit("action", "Test Room Thermometer", "readTemperature");
+					});
+				});
+			})
 		});
 	});
 })
