@@ -30,7 +30,7 @@ CanvasClient.prototype.processMessage = function(msg) {
 			process.exit(0);
 		}, 1500);
 	}
-}
+};
 
 CanvasClient.prototype.connect = function(callback) {
 	console.log("connecting",this.name,"...");
@@ -69,7 +69,7 @@ CanvasClient.prototype.onEvent = function(message) {
 };
 
 CanvasClient.prototype.onAction = function(message) {
-	console.log("action",message);
+	console.log(this.name,"action",message);
 	if (message.to === this.name) {
 		this.module.emit("action:" + message.action, message.data);
 	}

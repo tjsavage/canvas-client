@@ -53,6 +53,11 @@ LedStrip.prototype.turnOff = function() {
 LedStrip.prototype.confirmState = function() {
 	if (this.state == "off") {
 		this.lights.setColor({
+			r: 1,
+			g: 1,
+			b: 1
+		});
+		this.lights.setColor({
 			r: 0,
 			g: 0,
 			b: 0
