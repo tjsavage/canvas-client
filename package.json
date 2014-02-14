@@ -17,6 +17,7 @@
 		"request": "*",
 		"sleep": "*",
 		"time": "*",
-		"minimist": "*"
+		"minimist": "*",
+		"node-speakable": "git://github.com/sreuter/node-speakable.git"
 	}
 }
