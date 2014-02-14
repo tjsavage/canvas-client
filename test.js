@@ -282,4 +282,87 @@ describe("action trigger", function() {
 			});
 		});
 	});
+
+it("should trigger multiple actions", function(done) {
+		var actionTriggerConfig = {
+			"name": "Test Trigger",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "action_trigger",
+			"recipes": [
+				{
+					"if_": [
+						{
+							"event": "tripped"
+						}
+					],
+					"then": [
+						{
+							"to": "Test Speaker",
+							"action": "ringDoorbell"
+						},
+						{
+							"to": "Test On Off",
+							"action": "turnOn"
+						}
+					]
+				}
+			]
+		};
+
+		var speakerConfig = {
+			"name": "Test Speaker",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "speaker",
+		};
+
+		var motionConfig = {
+			"name": "Test Motion",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "motion_detector",
+			"pin": 1
+		};
+
+		var motionClient = new Client(motionConfig);
+		var speakerClient = new Client(speakerConfig);
+		var actionTriggerClient = new Client(actionTriggerConfig);
+		var dummyClient = new Client(dummyClientConfig);
+
+		motionClient.connect(function() {
+			speakerClient.connect(function() {
+				actionTriggerClient.connect(function() {
+					dummyClient.connect(function() {
+						var completed = 0;
+						function checkDone() {
+							completed++;
+							if (completed == 2) {
+								dummyClient.disconnect();
+								actionTriggerClient.disconnect();
+								speakerClient.disconnect();
+								motionClient.disconnect();
+								done();
+							}
+						}
+						dummyClient.socketListen("event", function(message) {
+							console.log(message);
+							if (message.event == "playedSound") {
+								checkDone();
+							}
+						});
+
+						dummyClient.socketListen("action", function(message) {
+							console.log(message);
+							if (message.action == "turnOn") {
+								checkDone();
+							}
+						});
+
+						motionClient.module.gpioChanged(1);
+					});
+				});
+			});
+		});
+	});
 })

@@ -16,6 +16,7 @@
 		"should": "*",
 		"request": "*",
 		"sleep": "*",
-		"time": "*"
+		"time": "*",
+		"minimist": "*"
 	}
 }

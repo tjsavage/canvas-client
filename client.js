@@ -128,6 +128,6 @@ CanvasClient.prototype.socketListen = function(name, callback) {
 module.exports.createClient = function(options) {
 	var client = new CanvasClient(options);
 	client.connect();
-}
+};
 
 module.exports.CanvasClient = CanvasClient;
