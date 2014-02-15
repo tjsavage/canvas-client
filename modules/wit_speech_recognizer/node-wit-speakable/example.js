@@ -1,7 +1,9 @@
 var Speakable = require('./');
 
 // Setup google speech
-var speakable = new Speakable();
+var speakable = new Speakable({
+	token: "UAYF5C5GUYE7PO7FZNKQMJMFCUPQXVVY"
+});
 
 speakable.on('speechStart', function() {
   console.log('onSpeechStart');

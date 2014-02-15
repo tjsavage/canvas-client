@@ -1,7 +1,7 @@
 var EventEmitter = require('events').EventEmitter,
     util = require('util'),
     spawn = require('child_process').spawn,
-    http = require('http');
+    https = require('https');
 
 var Speakable = function Speakable(options) {
   EventEmitter.call(this);
@@ -12,12 +12,13 @@ var Speakable = function Speakable(options) {
   this.recRunning = false;
   this.apiResult = {};
   this.apiLang = options.lang || "en-US";
-  this.cmd = __dirname + '/sox';
+  this.apiToken = options.token;
+  this.cmd = 'sox';
   this.cmdArgs = [
     '-b','16',
-    '-d','-t','flac','-',
+    '-d','-t','wav','output.wav',
     'rate','16000','channels','1',
-    'silence','1','0.1','0.1%','1','1.0','0.1%'
+    'silence','1','0.1','1%','1','1.0','1%'
   ];
 
 };
@@ -29,20 +30,21 @@ Speakable.prototype.postVoiceData = function() {
   var self = this;
 
   var options = {
-    hostname: 'www.google.com',
-    path: '/speech-api/v1/recognize?xjerr=1&client=chromium&pfilter=0&maxresults=1&lang=' + self.apiLang,
+    hostname: 'api.wit.ai',
+    path: '/speech',
     method: 'POST',
     headers: {
-      'Content-type': 'audio/x-flac; rate=16000'
+      'Content-type': 'audio/wav',
+      'Authorization': 'Bearer ' + self.apiToken
     }
   };
 
-  var req = http.request(options, function(res) {
+  var req = https.request(options, function(res) {
     self.recBuffer = [];
     if(res.statusCode !== 200) {
       return self.emit(
         'error',
-        'Non-200 answer from Google Speech API (' + res.statusCode + ')'
+        'Non-200 answer from Wit Speech API (' + res.statusCode + ')'
       );
     }
     res.setEncoding('utf8');
@@ -111,11 +113,5 @@ Speakable.prototype.resetVoice = function() {
 }
 
 Speakable.prototype.parseResult = function() {
-  var recognizedWords = [], apiResult = this.apiResult;
-  if(apiResult.hypotheses && apiResult.hypotheses[0]) {
-    recognizedWords = apiResult.hypotheses[0].utterance.split(' ');
-    this.emit('speechResult', recognizedWords);
-  } else {
-    this.emit('speechResult', []);
-  }
+  this.emit("speechResult", this.apiResult);
 }

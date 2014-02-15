@@ -7,6 +7,7 @@ function Clock(options) {
 	this.options = options;
 	this.alarms = options.alarms;
 
+	this.on("action:timer", this.setTimer.bind(this));
 	this.minuteTick();
 }
 util.inherits(Clock, canvasModule.BaseModule);
@@ -21,6 +22,12 @@ Clock.prototype.minuteTick = function() {
 		}
 	}
 	setTimeout(this.minuteTick.bind(this), 60000);
+};
+
+Clock.prototype.setTimer = function(data) {
+	setTimeout(function() {
+		this.emit("event", "timerDone");
+	}.bind(this), data.duration * 1000);
 };
 
 module.exports = Clock;
