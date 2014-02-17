@@ -10,6 +10,9 @@ if ("message" in argv) {
 		"serverIP": "10.0.1.19",
 		"serverPort": 3030
 	});
+	if (argv.ip) {
+		client.serverIP = argv.ip;
+	}
 	if (argv.data) {
 		var data = JSON.parse(argv.data);
 	}

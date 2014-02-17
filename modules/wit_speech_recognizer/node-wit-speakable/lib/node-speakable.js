@@ -6,7 +6,7 @@ var EventEmitter = require('events').EventEmitter,
 var Speakable = function Speakable(options) {
   EventEmitter.call(this);
 
-  options = options || {}
+  options = options || {};
 
   this.recBuffer = [];
   this.recRunning = false;
@@ -16,9 +16,10 @@ var Speakable = function Speakable(options) {
   this.cmd = 'sox';
   this.cmdArgs = [
     '-b','16',
-    '-d','-t','wav','output.wav',
+    '-d','-t','wav','-',
     'rate','16000','channels','1',
-    'silence','1','0.1','1%','1','1.0','1%'
+    'vad', '-T', '0.6', '-p', '0.2', '-t', '5',
+    'trim', '0','3'
   ];
 
 };
@@ -44,7 +45,7 @@ Speakable.prototype.postVoiceData = function() {
     if(res.statusCode !== 200) {
       return self.emit(
         'error',
-        'Non-200 answer from Wit Speech API (' + res.statusCode + ')'
+        'Non-200 answer from Wit Speech API (' + res.statusCode + '), '+ res.body
       );
     }
     res.setEncoding('utf8');
@@ -73,7 +74,7 @@ Speakable.prototype.postVoiceData = function() {
 Speakable.prototype.recordVoice = function() {
   var self = this;
 
-  var rec = spawn(self.cmd, self.cmdArgs, 'pipe');
+  var rec = spawn(self.cmd, self.cmdArgs, "pipe");
 
   // Process stdout
 
@@ -85,8 +86,10 @@ Speakable.prototype.recordVoice = function() {
   rec.stdout.on('data', function(data) {
     if(! self.recRunning) {
       self.emit('speechStart');
+      console.log("starting...");
       self.recRunning = true;
     }
+    console.log("data");
     self.recBuffer.push(data);
   });
 
@@ -94,7 +97,7 @@ Speakable.prototype.recordVoice = function() {
 
   rec.stderr.setEncoding('utf8');
   rec.stderr.on('data', function(data) {
-    console.log(data)
+    console.log(data);
   });
 
   rec.on('close', function(code) {
@@ -102,6 +105,7 @@ Speakable.prototype.recordVoice = function() {
     if(code) {
       self.emit('error', 'sox exited with code ' + code);
     }
+    console.log("stopping");
     self.emit('speechStop');
     self.postVoiceData();
   });
