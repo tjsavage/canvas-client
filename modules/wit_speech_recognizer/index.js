@@ -47,15 +47,26 @@ WitSpeechRecognizer.prototype.speechError = function(err) {
 WitSpeechRecognizer.prototype.speechResult = function(resultData) {
 	console.log(this.name,"speech result:",resultData);
 	if (resultData.outcome.intent == "set_device_power") {
-		var client = resultData.outcome.entities.canvas_client.value;
-		var value = resultData.outcome.entities.on_off.value;
-
-		this.setDevicePower(client, value);
+		if (resultData.outcome.entities.canvas_client && resultData.outcome.entities.on_off) {
+			var client = resultData.outcome.entities.canvas_client.value;
+			var value = resultData.outcome.entities.on_off.value;
+			
+			this.setDevicePower(client, value);
+		} else {
+			// Try to specify
+			console.log("didn't get all the info needed",resultData);
+		}
+			
 	} else if (resultData.outcome.intent == "send_device_action") {
-		var client = resultData.outcome.entities.canvas_client.value;
-		var action = resultData.outcome.entities.canvas_client_action.value;
+		if (resultData.outcome.entities.canvas_client && resultData.outcome.entities.canvas_client_action) {
+			var client = resultData.outcome.entities.canvas_client.value;
+			var action = resultData.outcome.entities.canvas_client_action.value;
 
-		this.emit("action", client, action);
+			this.emit("action", client, action);
+		} else {
+			console.log("didn't get all the info needed",resultData);
+		}
+		
 	} else if (resultData.outcome.intent == "set_timer") {
 		var client = resultData.outcome.entities.canvas_client.value;
 		var action = resultData.outcome.entities.canvas_client_action.value;
