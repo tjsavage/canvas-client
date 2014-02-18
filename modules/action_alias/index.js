@@ -7,7 +7,7 @@ function ActionAlias(options) {
 	this.name = options.name;
 	this.options = options;
 
-	this.on("action:ringDoorbell", function(message) {
+	this.on("action:_", function(message) {
 		console.log(message);
 		for(var index in this.options.clients) {
 			var client = this.options.clients[index];

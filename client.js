@@ -78,6 +78,7 @@ CanvasClient.prototype.onAction = function(message) {
 		message.data.from = message.from;
 		message.data.action = message.action;
 		this.module.emit("action:" + message.action, message.data);
+		this.module.emit("action:_", message.data);
 	}
 };
 
