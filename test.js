@@ -432,4 +432,73 @@ it("should trigger multiple actions", function(done) {
 			});
 		});
 	});
-})
+});
+
+describe("action alias", function() {
+	it("should trigger actions to all clients", function(done) {
+		var actionAliasConfig = {
+			"name": "Test Alias",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "action_alias",
+			"clients": [
+				"Test Speaker 1",
+				"Test Speaker 2"
+			]
+		};
+
+		var speaker1Config = {
+			"name": "Test Speaker 1",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "speaker",
+		};
+
+		var speaker2Config = {
+			"name": "Test Speaker 2",
+			"serverIP": "127.0.0.1",
+			"serverPort": 3030,
+			"moduleName": "speaker",
+		};
+
+		var speaker1Client = new Client(speaker1Config);
+		var speaker2Client = new Client(speaker2Config);
+		var actionAliasClient = new Client(actionAliasConfig);
+		var dummyClient = new Client(dummyClientConfig);
+
+		speaker1Client.connect(function() {
+			speaker2Client.connect(function() {
+				actionAliasClient.connect(function() {
+					dummyClient.connect(function() {
+						var speaker1Done = false;
+						var speaker2Done = false;
+						dummyClient.socketListen("event", function(message) {
+							function checkDone() {
+								if (speaker1Done && speaker2Done) {
+
+									dummyClient.disconnect();
+									actionAliasClient.disconnect();
+									speaker1Client.disconnect();
+									speaker2Client.disconnect();
+									done();
+								}
+							}
+
+							if (message.from == "Test Speaker 1") {
+								speaker1Done = true;
+								checkDone();
+							}
+
+							if (message.from == "Test Speaker 2") {
+								speaker2Done = true;
+								checkDone();
+							}
+						});
+
+						dummyClient.module.emit("action", "Test Alias", "ringDoorbell");
+					});
+				});
+			});
+		});
+	});
+});
