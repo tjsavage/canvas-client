@@ -21,7 +21,7 @@ var Speakable = function Speakable(options) {
     'highpass','100',
     'compand', '0.05,0.2', '6:-54,-90,-36,-36,-24,-24,0,-12', '0', '-90', '0.1',
     'vad', '-T', '0.6', '-p', '0.2', '-t', '5',
-    'trim', '0','3'
+    'trim', '0','1.8'
   ];
 
 };

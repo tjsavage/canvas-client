@@ -7,6 +7,7 @@ function Speaker(options) {
 	canvasModule.BaseModule.call(this);
 
 	this.options = options;
+	this.volume = options.volume;
 
 	this.on('action:playSound', this.playSound.bind(this));
 	this.on('action:ringDoorbell', this.ringDoorbell.bind(this));
