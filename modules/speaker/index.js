@@ -30,7 +30,7 @@ Speaker.prototype.playSound = function(data) {
 };
 
 Speaker.prototype.streamMP3 = function(data) {
-	this.playChildProcess = exec("play -t mp3 " + data.url);
+	this.playChildProcess = exec('play -t mp3 "' + data.url + '"');
 };
 
 Speaker.prototype.ringDoorbell = function(data) {
