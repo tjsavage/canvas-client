@@ -19,6 +19,6 @@
 		"time": "*",
 		"minimist": "*",
 		"node-speakable": "git://github.com/sreuter/node-speakable.git",
-		"node-spotify": "*"
+		"node-python": "*"
 	}
 }
