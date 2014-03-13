@@ -54,7 +54,7 @@ GoogleMusic.prototype = {
             }
         }
         this._sendRequest('get', 'https://android.clients.google.com/music/mplay', options, null, function(result, response) {
-
+            
         });
     },
 

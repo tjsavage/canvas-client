@@ -33,5 +33,9 @@ GooglePlayMusic.prototype.search = function(query) {
 	});
 };
 
+GooglePlayMusic.prototype.getStreamURL = function(song_id) {
+	
+};
+
 
 module.exports = GooglePlayMusic;
