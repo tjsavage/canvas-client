@@ -30,10 +30,14 @@ class GooglePlayMusic(BaseModule):
 
 	def onAction(self, message):
 		if message["action"] == "search_and_play":
-			results = self.api.search_all_access(message["data"]["query"])
-			if not len(results["song_hits"]) > 0:
-				return
-			song_data = results["song_hits"][0]["track"]
-			print song_data
-			stream_url = self.api.get_stream_url(song_data["nid"], self.deviceId)
-			self.client.emitAction(self.speaker, "streamMP3", {"url": stream_url})
+			query = message["data"]["query"]
+			self.search_and_play(query)
+
+	def search_and_play(self, query):
+		results = self.api.search_all_access(query)
+		if not len(results["song_hits"]) > 0:
+			return
+		song_data = results["song_hits"][0]["track"]
+		print song_data
+		stream_url = self.api.get_stream_url(song_data["nid"], self.deviceId)
+		self.client.emitAction(self.speaker, "streamMP3", {"url": stream_url})

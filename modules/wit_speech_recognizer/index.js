@@ -73,6 +73,12 @@ WitSpeechRecognizer.prototype.speechResult = function(resultData) {
 		var duration = resultData.outcome.entities.duration.value;
 
 		this.emit("action", client, action, {duration: duration});
+	} else if (resultData.outcome.intent == "search_and_play") {
+		var client = resultData.outcome.entities.canvas_client.value;
+		var action = "search_and_play";
+		var query = resultData.outcome.entities.search_query.value;
+
+		this.emit("action", client, action, {query: query});
 	}
 
 	if (this.listening) {
