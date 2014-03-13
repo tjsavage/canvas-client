@@ -9,10 +9,11 @@ class GooglePlayMusic(BaseModule):
 		if self.api.login(self.options["username"], self.options["password"]):
 			print "Login Successful"
 		self.webClient = Webclient()
-		webClient.login(self.options["username"], self.options["password"])
+		self.webClient.login(self.options["username"], self.options["password"])
 
 		#self.findRegisteredDevice()
 		self.deviceId = self.options["deviceId"]
+		self.speaker = self.options["speaker"]
 
 	"""
 	def findRegisteredDevice(self):
@@ -35,7 +36,4 @@ class GooglePlayMusic(BaseModule):
 			song_data = results["song_hits"][0]["track"]
 			print song_data
 			stream_url = self.api.get_stream_url(song_data["nid"], self.deviceId)
-			print stream_url
-			audio = self.webClient.get_stream_audio(song_data["nid"])
-			with open("output.mp3", 'wb') as output:
-				output.write(audio)
+			self.client.emitAction(self.speaker, "streamMP3", {"url": stream_url})
