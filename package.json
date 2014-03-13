@@ -18,7 +18,6 @@
 		"sleep": "*",
 		"time": "*",
 		"minimist": "*",
-		"node-speakable": "git://github.com/sreuter/node-speakable.git",
-		"node-python": "*"
+		"node-speakable": "git://github.com/sreuter/node-speakable.git"
 	}
 }
