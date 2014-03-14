@@ -1,6 +1,6 @@
 var canvas = require('./client');
 var argv = require('minimist')(process.argv.slice(2));
-var exec = require('child_process').exec;
+var child_process = require('child_process');
 
 if ("message" in argv) {
 	var Client = canvas.CanvasClient;
@@ -33,14 +33,20 @@ if ("message" in argv) {
 } else {
 	var options = require(process.argv[2]);
 	if (options.language && options.language == 'python') {
-		var child = exec('python ' + __dirname + '/app.py ' + process.argv[2], function(error, stdout, stderr) {
-			console.log('stdout: ' + stdout);
-			console.log('stderr: ' + stderr);
+		var child = child_process.spawn('python', [__dirname + '/app.py', process.argv[2]]);
+		child.stdout.on('data', function(data) {
+			console.log('stdout: ' + data);
 		});
-		child.stdout.pipe(process.stdout);
-		child.stderr.pipe(process.stderr);
+
+		child.stderr.on('data', function(data) {
+			console.log('stderr: ' + data);
+		});
+
+		child.on('close', function(code) {
+			console.log("child process exited with code " + code);
+		});
 	} else {
 		var client = canvas.createClient((require(process.argv[2])));
-	}	
+	}
 }
 

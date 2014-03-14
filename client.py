@@ -1,5 +1,6 @@
 from socketIO_client import SocketIO
 import importlib
+import sys
 
 class CanvasClient(object):
     def __init__(self, options):
@@ -29,11 +30,13 @@ class CanvasClient(object):
     def onEvent(self, message):
         print "%s %s %s" % (self.name, "onEvent", message)
         self.module.onEvent(message)
+        sys.stdout.flush()
 
     def onAction(self, message):
         print "%s %s %s" % (self.name, "onAction", message)
         if "to" in message and message["to"] == self.name:
             self.module.onAction(message)
+        sys.stdout.flush()
 
     def emitEvent(self, event, eventData):
         message = {
