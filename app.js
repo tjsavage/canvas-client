@@ -1,5 +1,6 @@
 var canvas = require('./client');
 var argv = require('minimist')(process.argv.slice(2));
+var exec = require('child_process').exec;
 
 if ("message" in argv) {
 	var Client = canvas.CanvasClient;
@@ -30,6 +31,16 @@ if ("message" in argv) {
 	});
 	client.connect();
 } else {
-	var client = canvas.createClient((require(process.argv[2])));
+	var options = require(process.argv[2]);
+	if (options.language && options.language == 'python') {
+		var child = exec('python app.py ' + process.argv[2], function(error, stdout, sterr) {
+			console.log('stdout: ' + stdout);
+			console.log('stderr: ' + stderr);
+		});
+		child.stdout.pipe(process.stdout);
+		child.stderr.pipe(process.stderr);
+	} else {
+		var client = canvas.createClient((require(process.argv[2])));
+	}	
 }
 
