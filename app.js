@@ -33,7 +33,7 @@ if ("message" in argv) {
 } else {
 	var options = require(process.argv[2]);
 	if (options.language && options.language == 'python') {
-		var child = exec('python ' + process.cwd() + '/app.py ' + process.argv[2], function(error, stdout, stderr) {
+		var child = exec('python ' + __dirname + '/app.py' + process.argv[2], function(error, stdout, stderr) {
 			console.log('stdout: ' + stdout);
 			console.log('stderr: ' + stderr);
 		});
