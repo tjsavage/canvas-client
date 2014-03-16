@@ -77,6 +77,7 @@ Speakable.prototype.recordVoice = function() {
   var self = this;
 
   var rec = spawn(self.cmd, self.cmdArgs, "pipe");
+  this.rec = rec;
 
   // Process stdout
 
@@ -111,6 +112,12 @@ Speakable.prototype.recordVoice = function() {
     self.emit('speechStop');
     self.postVoiceData();
   });
+};
+
+Speakable.prototype.killRecording = function() {
+  if (this.rec) {
+    this.rec.kill();
+  }
 };
 
 Speakable.prototype.resetVoice = function() {

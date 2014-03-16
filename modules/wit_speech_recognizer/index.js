@@ -23,6 +23,8 @@ function WitSpeechRecognizer(options) {
     this.on("action:startListening", this.startListening.bind(this));
     this.on("action:stopListening", this.stopListening.bind(this));
     this.on("event:receivedMessage", this.receivedMessage.bind(this));
+    this.on("event:soundStarted", this.stopListening.bind(this));
+    this.on("event:soundEnded", this.startListening.bind(this));
 
     this.speakable.on('speechResult', this.speechResult.bind(this));
     this.speakable.on('error', this.speechError.bind(this));
@@ -71,6 +73,7 @@ WitSpeechRecognizer.prototype.startListening = function() {
 
 WitSpeechRecognizer.prototype.stopListening = function() {
     this.listening = false;
+    this.speakable.killRecording();
 };
 
 WitSpeechRecognizer.prototype.speechError = function(err) {

@@ -27,10 +27,15 @@ Speaker.prototype.playSound = function(data) {
 	this.emit("event", "playedSound", {
 		name: data.name
 	});
+	
 };
 
 Speaker.prototype.streamMP3 = function(data) {
 	this.playChildProcess = exec('play -t mp3 "' + data.url + '"');
+	this.emit("event", "soundStarted");
+	this.playChildProcess.on("exit", function(code, signal) {
+		this.emit("event", "soundEnded");
+	});
 };
 
 Speaker.prototype.ringDoorbell = function(data) {
