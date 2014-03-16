@@ -117,14 +117,15 @@ Speakable.prototype.recordVoice = function() {
 Speakable.prototype.killRecording = function() {
   if (this.rec) {
     this.rec.kill();
+    this.resetVoice();
   }
 };
 
 Speakable.prototype.resetVoice = function() {
   var self = this;
   self.recBuffer = [];
-}
+};
 
 Speakable.prototype.parseResult = function() {
   this.emit("speechResult", this.apiResult);
-}
+};

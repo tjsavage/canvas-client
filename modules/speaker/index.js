@@ -13,6 +13,7 @@ function Speaker(options) {
 
 	this.on('action:playSound', this.playSound.bind(this));
 	this.on('action:streamMP3', this.streamMP3.bind(this));
+	this.on('action:stopStreaming', this.stopStreaming.bind(this));
 	this.on('action:ringDoorbell', this.ringDoorbell.bind(this));
 }
 util.inherits(Speaker, canvasModule.BaseModule);
@@ -35,7 +36,11 @@ Speaker.prototype.streamMP3 = function(data) {
 	this.emit("event", "soundStarted");
 	this.playChildProcess.on("exit", function(code, signal) {
 		this.emit("event", "soundEnded");
-	});
+	}.bind(this));
+};
+
+Speaker.prototype.stopStreaming = function(data) {
+	this.playChildProcess.kill();
 };
 
 Speaker.prototype.ringDoorbell = function(data) {
