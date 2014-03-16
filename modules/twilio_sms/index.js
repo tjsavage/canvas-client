@@ -29,7 +29,6 @@ function TwilioSMS(options) {
 util.inherits(TwilioSMS, canvasModule.BaseModule);
 
 TwilioSMS.prototype.incomingSMS = function(req, res) {
-	console.log(req);
 	if(req.query.From != this.number) {
 		console.log("Wrong number...",req.query.From,"!=",this.number);
 		return;
