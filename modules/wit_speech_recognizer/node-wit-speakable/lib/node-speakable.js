@@ -16,7 +16,7 @@ var Speakable = function Speakable(options) {
   this.cmd = 'sox';
   this.cmdArgs = [
     '-b','16',
-    '-d','-t','wav','-',
+    '-d','-t','wav','-', '-q',
     'rate','16000','channels','1',
     'highpass','100',
     'compand', '0.05,0.2', '6:-54,-90,-36,-36,-24,-24,0,-12', '0', '-90', '0.1',
