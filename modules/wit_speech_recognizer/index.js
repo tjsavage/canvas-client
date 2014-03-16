@@ -2,98 +2,128 @@ var util = require('util');
 var canvasModule = require('../canvas-module');
 var path = require('path');
 var fs = require('fs');
+var https = require('https');
+var request = require('request');
 
 function WitSpeechRecognizer(options) {
-	canvasModule.BaseModule.call(this);
+    canvasModule.BaseModule.call(this);
 
-	this.options = options;
-	this.listening = false;
-	this.name = this.options.name;
+    this.options = options;
+    this.listening = false;
+    this.name = this.options.name;
+    this.messageSources = this.options.messageSources;
+    this.witToken = options.token;
 
-	var Speakable = require('./node-wit-speakable');
+    var Speakable = require('./node-wit-speakable');
 
-	// Setup google speech
-	this.speakable = new Speakable({
-		token: options.token
-	});
-	
-	this.on("action:startListening", this.startListening.bind(this));
-	this.on("action:stopListening", this.stopListening.bind(this));
+    // Setup google speech
+    this.speakable = new Speakable({
+        token: options.token
+    });
+    
+    this.on("action:startListening", this.startListening.bind(this));
+    this.on("action:stopListening", this.stopListening.bind(this));
+    this.on("event:receivedMessage", this.receivedMessage.bind(this));
 
-	this.speakable.on('speechResult', this.speechResult.bind(this));
-	this.speakable.on('error', this.speechError.bind(this));
+    this.speakable.on('speechResult', this.speechResult.bind(this));
+    this.speakable.on('error', this.speechError.bind(this));
 
-	this.startListening();
+    this.startListening();
 }
 util.inherits(WitSpeechRecognizer, canvasModule.BaseModule);
 
+WitSpeechRecognizer.prototype.receivedMessage = function(eventMessage) {
+    if (this.messageSources && this.messageSources.size > 0 && this.messageSources.indexOf(eventMessage.from) != -1) {
+        this.sendWitText(eventMessage.data.message.body);
+    }
+};
+
+WitSpeechRecognizer.prototype.sendWitText = function(text) {
+    var options = {
+        url: 'https://api.wit.ai/message',
+        headers: {
+          'Authorization': 'Bearer ' + this.witToken
+        },
+        qs: {
+            "q": text
+        }
+    };
+
+    request.get(options, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var data = JSON.parse(body);
+            this.speechResult(data);
+        }
+    }.bind(this));
+};
+
 WitSpeechRecognizer.prototype.startListening = function() {
-	console.log(this.name,"started listening");
-	this.listening = true;
-	this.speakable.recordVoice();
+    console.log(this.name,"started listening");
+    this.listening = true;
+    this.speakable.recordVoice();
 };
 
 WitSpeechRecognizer.prototype.stopListening = function() {
-	this.listening = false;
+    this.listening = false;
 };
 
 WitSpeechRecognizer.prototype.speechError = function(err) {
-	console.log(this.name,"speech error:",err);
-	if (this.listening) {
-		this.speakable.recordVoice();
-	}
+    console.log(this.name,"speech error:",err);
+    if (this.listening) {
+        this.speakable.recordVoice();
+    }
 };
 
 WitSpeechRecognizer.prototype.speechResult = function(resultData) {
-	console.log(this.name,"speech result:",resultData);
-	if (resultData.outcome.intent == "set_device_power") {
-		if (resultData.outcome.entities.canvas_client && resultData.outcome.entities.on_off) {
-			var client = resultData.outcome.entities.canvas_client.value;
-			var value = resultData.outcome.entities.on_off.value;
-			
-			this.setDevicePower(client, value);
-		} else {
-			// Try to specify
-			console.log("didn't get all the info needed",resultData);
-		}
-			
-	} else if (resultData.outcome.intent == "send_device_action") {
-		if (resultData.outcome.entities.canvas_client && resultData.outcome.entities.canvas_client_action) {
-			var client = resultData.outcome.entities.canvas_client.value;
-			var action = resultData.outcome.entities.canvas_client_action.value;
+    console.log(this.name,"speech result:",resultData);
+    if (resultData.outcome.intent == "set_device_power") {
+        if (resultData.outcome.entities.canvas_client && resultData.outcome.entities.on_off) {
+            var client = resultData.outcome.entities.canvas_client.value;
+            var value = resultData.outcome.entities.on_off.value;
+            
+            this.setDevicePower(client, value);
+        } else {
+            // Try to specify
+            console.log("didn't get all the info needed",resultData);
+        }
+            
+    } else if (resultData.outcome.intent == "send_device_action") {
+        if (resultData.outcome.entities.canvas_client && resultData.outcome.entities.canvas_client_action) {
+            var client = resultData.outcome.entities.canvas_client.value;
+            var action = resultData.outcome.entities.canvas_client_action.value;
 
-			this.emit("action", client, action);
-		} else {
-			console.log("didn't get all the info needed",resultData);
-		}
-		
-	} else if (resultData.outcome.intent == "set_timer") {
-		var client = resultData.outcome.entities.canvas_client.value;
-		var action = resultData.outcome.entities.canvas_client_action.value;
-		var duration = resultData.outcome.entities.duration.value;
+            this.emit("action", client, action);
+        } else {
+            console.log("didn't get all the info needed",resultData);
+        }
+        
+    } else if (resultData.outcome.intent == "set_timer") {
+        var client = resultData.outcome.entities.canvas_client.value;
+        var action = resultData.outcome.entities.canvas_client_action.value;
+        var duration = resultData.outcome.entities.duration.value;
 
-		this.emit("action", client, action, {duration: duration});
-	} else if (resultData.outcome.intent == "search_and_play") {
-		var client = resultData.outcome.entities.canvas_client.value;
-		var action = "search_and_play";
-		var query = resultData.outcome.entities.search_query.value;
+        this.emit("action", client, action, {duration: duration});
+    } else if (resultData.outcome.intent == "search_and_play") {
+        var client = resultData.outcome.entities.canvas_client.value;
+        var action = "search_and_play";
+        var query = resultData.outcome.entities.search_query.value;
 
-		this.emit("action", client, action, {query: query});
-	}
+        this.emit("action", client, action, {query: query});
+    }
 
-	if (this.listening) {
-		this.speakable.recordVoice();
-	}
+    if (this.listening) {
+        this.speakable.recordVoice();
+    }
 };
 
 WitSpeechRecognizer.prototype.setDevicePower = function(client, value) {
-	if (value == "on") {
-		var action = "turnOn";
-	} else if (value == "off") {
-		var action = "turnOff";
-	}
+    if (value == "on") {
+        var action = "turnOn";
+    } else if (value == "off") {
+        var action = "turnOff";
+    }
 
-	this.emit("action", client, action);
+    this.emit("action", client, action);
 };
 
 
