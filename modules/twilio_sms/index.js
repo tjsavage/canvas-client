@@ -20,7 +20,7 @@ function TwilioSMS(options) {
 	this.server.listen(this.app.get('port'), function() {
 		console.log("twilio sms express server listening on port " + this.app.get('port'));
 	}.bind(this));
-	this.app.post('/twilio/sms', this.incomingSMS.bind(this));
+	this.app.get('/twilio/sms', this.incomingSMS.bind(this));
 
 	this.clientWaitingForResponse = null;
 
@@ -29,15 +29,17 @@ function TwilioSMS(options) {
 util.inherits(TwilioSMS, canvasModule.BaseModule);
 
 TwilioSMS.prototype.incomingSMS = function(req, res) {
-	if(req.body.From != this.number) {
-		console.log("Wrong number...",req.body.from);
+	console.log(req);
+	if(req.query.From != this.number) {
+		console.log("Wrong number...",req.query.From,"!=",this.number);
 		return;
 	}
 
-	var smsBody = req.body.Body;
+	var smsBody = req.query.Body;
 	this.emit("event", "receivedMessage", {
 		"body": smsBody
 	});
+	res.send(200);
 
 	if (this.clientWaitingForResponse) {
 		this.emit("action", this.clientWaitingForResponse, "receivedReponse", {
