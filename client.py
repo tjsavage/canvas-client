@@ -46,6 +46,7 @@ class CanvasClient(object):
         }
         print "%s %s %s" % (self.name, "emitEvent", message)
         self.socketIO.emit("event", message)
+        sys.stdout.flush()
 
     def emitAction(self, to, action, data):
         message = {
@@ -56,6 +57,7 @@ class CanvasClient(object):
         }
         print "%s %s %s" % (self.name, "emitAction", message)
         self.socketIO.emit("action", message)
+        sys.stdout.flush()
 
 def create_client(options):
     client = CanvasClient(options)
