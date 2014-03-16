@@ -11,7 +11,6 @@ function WitSpeechRecognizer(options) {
     this.options = options;
     this.listening = false;
     this.name = this.options.name;
-    this.messageSources = this.options.messageSources;
     this.witToken = options.token;
 
     var Speakable = require('./node-wit-speakable');
@@ -28,13 +27,18 @@ function WitSpeechRecognizer(options) {
     this.speakable.on('speechResult', this.speechResult.bind(this));
     this.speakable.on('error', this.speechError.bind(this));
 
-    this.startListening();
+    if (!this.options.ignoreMic) {
+        this.startListening();
+    }
 }
 util.inherits(WitSpeechRecognizer, canvasModule.BaseModule);
 
 WitSpeechRecognizer.prototype.receivedMessage = function(eventMessage) {
-    if (this.messageSources && this.messageSources.size > 0 && this.messageSources.indexOf(eventMessage.from) != -1) {
-        this.sendWitText(eventMessage.data.message.body);
+    console.log("Processing message:",eventMessage);
+    if (this.options.messageSources && this.options.messageSources.length > 0 && this.options.messageSources.indexOf(eventMessage.from) != -1) {
+        this.sendWitText(eventMessage.data.body);
+    } else {
+        console.log(eventMessage.from, "not in messageSources:", this.options.messageSources, "...ignoring");
     }
 };
 
@@ -53,6 +57,8 @@ WitSpeechRecognizer.prototype.sendWitText = function(text) {
         if (!error && response.statusCode == 200) {
             var data = JSON.parse(body);
             this.speechResult(data);
+        } else {
+            console.log(error);
         }
     }.bind(this));
 };
