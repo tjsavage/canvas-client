@@ -1,6 +1,7 @@
 var util = require('util');
 var canvasModule = require('../canvas-module');
 var exec = require('child_process').exec;
+var spawn = require('child_process').spawn;
 var sys = require('sys');
 
 function Speaker(options) {
@@ -24,15 +25,17 @@ function puts(error, stdout, stderr) {
 
 Speaker.prototype.playSound = function(data) {
 	var soundFile = __dirname + "/sounds/" + data.name;
-	this.playChildProcess = exec("aplay " + soundFile, puts);
+	this.playChildProcess = spawn("aplay", [soundFile]);
 	this.emit("event", "playedSound", {
 		name: data.name
 	});
-	
 };
 
 Speaker.prototype.streamMP3 = function(data) {
-	this.playChildProcess = exec('play -t mp3 "' + data.url + '"');
+	if (this.playChildProcess) {
+		this.playChildProcess.kill('SIGHUP');
+	}
+	this.playChildProcess = spawn('play', ['-t', 'mp3', '"' + data.url + '"']);
 	this.emit("event", "soundStarted");
 	this.emit("event", "streamStarted");
 	this.playChildProcess.on("exit", function(code, signal) {
@@ -46,7 +49,7 @@ Speaker.prototype.streamMP3 = function(data) {
 
 Speaker.prototype.stopStreaming = function(data) {
 	if (this.playChildProcess) {
-		this.playChildProcess.kill();
+		this.playChildProcess.kill('SIGHUP');
 		this.emit("event", "streamKilled");
 	}
 };
