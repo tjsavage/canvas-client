@@ -125,6 +125,11 @@ WitSpeechRecognizer.prototype.speechResult = function(resultData) {
         var query = resultData.outcome.entities.search_query.value;
 
         this.emit("action", client, action, {query: query});
+    } else if (resultData.outcome.intent == "stop_music") {
+        var client = resultData.outcome.entities.canvas_client.value;
+        var action = resultData.outcome.entities.canvas_client_action;
+
+        this.emit("action", client, action, {});
     }
 
     if (this.listening) {

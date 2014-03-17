@@ -40,7 +40,7 @@ class GooglePlayMusic(BaseModule):
 			query = message["data"]["query"]
 			self.search_and_play(query)
 
-		if message["action"] == "stopMusic":
+		if message["action"] == "stopMusic" or message["action"] == "stop":
 			self.stop_music()
 
 		if message["action"] == "startRadio":
@@ -56,6 +56,7 @@ class GooglePlayMusic(BaseModule):
 		self.play_track(song_data)
 
 	def play_track(self, song_data):
+		self.stop_music()
 		print "Playing %s, by %s" % (song_data["title"], song_data["artist"])
 		stream_url = self.api.get_stream_url(song_data["nid"], self.deviceId)
 		self.client.emitAction(self.speaker, "streamMP3", {"url": stream_url})
