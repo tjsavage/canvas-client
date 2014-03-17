@@ -72,6 +72,7 @@ WitSpeechRecognizer.prototype.startListening = function() {
 };
 
 WitSpeechRecognizer.prototype.stopListening = function() {
+    console.log(this.name,"stopping listening");
     this.listening = false;
     this.speakable.killRecording();
 };

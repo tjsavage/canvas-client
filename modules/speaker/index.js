@@ -34,13 +34,19 @@ Speaker.prototype.playSound = function(data) {
 Speaker.prototype.streamMP3 = function(data) {
 	this.playChildProcess = exec('play -t mp3 "' + data.url + '"');
 	this.emit("event", "soundStarted");
+	this.emit("event", "streamStarted");
 	this.playChildProcess.on("exit", function(code, signal) {
 		this.emit("event", "soundEnded");
+		this.emit("event", "streamEnded");
+		if (signal) {
+			this.emit("event", "streamKilled");
+		}
 	}.bind(this));
 };
 
 Speaker.prototype.stopStreaming = function(data) {
 	this.playChildProcess.kill();
+	this.emit("event", "streamKilled");
 };
 
 Speaker.prototype.ringDoorbell = function(data) {
