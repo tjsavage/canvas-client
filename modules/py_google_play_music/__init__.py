@@ -62,6 +62,7 @@ class GooglePlayMusic(BaseModule):
 		self.client.emitAction(self.speaker, "streamMP3", {"url": stream_url})
 
 	def stop_music(self):
+		self.playing_track_list = False
 		self.client.emitAction(self.speaker, "stopStreaming", {})
 
 	def start_radio(self, query):
@@ -90,6 +91,7 @@ class GooglePlayMusic(BaseModule):
 		self.play_track_list(tracks)
 
 	def play_track_list(self, tracks):
+		self.playing_track_list = True
 		self.current_track_list = tracks
 		self.current_track_index = 0
 		self.play_track(self.current_track_list[0])
