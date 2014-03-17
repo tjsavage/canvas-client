@@ -32,25 +32,26 @@ Speaker.prototype.playSound = function(data) {
 };
 
 Speaker.prototype.streamMP3 = function(data) {
-	if (this.playChildProcess) {
-		this.playChildProcess.kill('SIGHUP');
-	}
+	this.stopStreaming({});
 	this.playChildProcess = spawn('play', ['-t', 'mp3', '"' + data.url + '"']);
 	this.emit("event", "soundStarted");
 	this.emit("event", "streamStarted");
 	this.playChildProcess.on("exit", function(code, signal) {
+		console.log("child process ended. code:",code,"signal:",signal);
 		this.emit("event", "soundEnded");
-		this.emit("event", "streamEnded");
-		if (signal) {
+		if (signal || code !== 0) {
 			this.emit("event", "streamKilled");
+		} else {
+			this.emit("event", "streamEnded");
+			this.playChildProcess = null;
 		}
 	}.bind(this));
 };
 
 Speaker.prototype.stopStreaming = function(data) {
-	if (this.playChildProcess) {
+	if (this.playChildProcess !== null) {
 		this.playChildProcess.kill('SIGHUP');
-		this.emit("event", "streamKilled");
+		console.log("killed stream");
 	}
 };
 
