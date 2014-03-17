@@ -33,7 +33,7 @@ Speaker.prototype.playSound = function(data) {
 
 Speaker.prototype.streamMP3 = function(data) {
 	this.stopStreaming({});
-	this.playChildProcess = spawn('play', ['-t', 'mp3', '"' + data.url + '"']);
+	this.playChildProcess = spawn('play', ['-t', 'mp3', data.url]);
 	this.emit("event", "soundStarted");
 	this.emit("event", "streamStarted");
 	this.playChildProcess.on("exit", function(code, signal) {
