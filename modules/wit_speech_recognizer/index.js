@@ -119,6 +119,12 @@ WitSpeechRecognizer.prototype.speechResult = function(resultData) {
         var query = resultData.outcome.entities.search_query.value;
 
         this.emit("action", client, action, {query: query});
+    } else if (resultData.outcome.intent == "start_radio") {
+        var client = resultData.outcome.entities.canvas_client.value;
+        var action = "startRadio";
+        var query = resultData.outcome.entities.search_query.value;
+
+        this.emit("action", client, action, {query: query});
     }
 
     if (this.listening) {
