@@ -45,8 +45,10 @@ Speaker.prototype.streamMP3 = function(data) {
 };
 
 Speaker.prototype.stopStreaming = function(data) {
-	this.playChildProcess.kill();
-	this.emit("event", "streamKilled");
+	if (this.playChildProcess) {
+		this.playChildProcess.kill();
+		this.emit("event", "streamKilled");
+	}
 };
 
 Speaker.prototype.ringDoorbell = function(data) {
