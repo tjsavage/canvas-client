@@ -43,8 +43,8 @@ Speaker.prototype.streamMP3 = function(data) {
 			this.emit("event", "streamKilled");
 		} else {
 			this.emit("event", "streamEnded");
-			this.playChildProcess = null;
 		}
+		this.playChildProcess = null;
 	}.bind(this));
 };
 
